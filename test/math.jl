@@ -205,6 +205,7 @@ end
             @test isequal(sqrt(T(100000000)), T(10000))
             @test isequal(tan(T(0)), T(0))
             @test tan(T(pi)/4) ≈ T(1) atol=eps(T)
+            @test cot(π) ≈ 0 # Issue #28943 - previously was error
         end
         @testset "Inverses" begin
             @test acos(cos(x)) ≈ x

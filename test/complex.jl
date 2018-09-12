@@ -481,6 +481,50 @@ end
     end
 end
 
+@testset "tanh and tan" begin
+    # tanh: has properties
+    #  tanh(conj(z)) = conj(tanh(z))
+    #  tanh(-z) = -tanh(z)
+
+    # tan
+    #  tan(z) = -i*tan(iz)
+    #  tan(-z) = -tan(z)
+
+    for (x,y) in [(complex( 0.0, 0.0), complex( 0.0, 0.0)),
+                  (complex( 0.0, Inf), complex( 0.0, NaN)),
+                  (complex( 0.0, NaN), complex( 0.0, NaN)),
+                  (complex( 7.2, Inf), complex( NaN, NaN)),
+                  (complex( 7.2, NaN), complex( NaN, NaN)),
+                  (complex( 7.2, 0.0), complex( sinh(7.2), 0.0)),
+                  (complex( 1e5, 0.0), complex( sinh(1e5), 0.0)),
+                  (complex( Inf, 0.0), complex( Inf, 0.0)),
+                  (complex( Inf, 7.2), Inf*cis(7.2)),
+                  (complex( Inf, Inf), complex( Inf, NaN)),
+                  (complex( Inf, NaN), complex( Inf, NaN)),
+                  (complex( NaN, 0.0), complex( NaN, 0.0)),
+                  (complex( NaN, 7.2), complex( NaN, NaN)),
+                  (complex( NaN, NaN), complex( NaN, NaN))]
+        @test isequal(tanh(x), y)
+        @test isequal(tanh(conj(x)), conj(y))
+        @test isequal(tanh(-x), -y)
+        @test isequal(tanh(-conj(x)), -conj(y))
+
+        xx = complex(imag(x),-real(x))
+        yy = complex(imag(y),-real(y))
+
+        @test isequal(tan(xx),yy)
+        @test isequal(tan(conj(xx)), conj(yy))
+        @test isequal(tan(-xx), -yy)
+        @test isequal(tan(-conj(xx)), -conj(yy))
+
+        yyy = tan(pi*xx)
+        @test isequal(tanpi(xx), yyy)
+        @test isequal(tanpi(conj(xx)),conj(yyy))
+        @test isequal(tanpi(-xx),-yyy)
+        @test isequal(tanpi(-conj(xx)),-conj(yyy))
+    end
+end
+
 @testset "tanh(op(z)) == op(tanh(z)) for op in (conj, -)" begin
     @test isequal(tanh(complex( 0, 0)),complex(0.0,0.0)) #integer fallback
     @test isequal(tanh(complex( 0.0, 0.0)),complex(0.0,0.0))
